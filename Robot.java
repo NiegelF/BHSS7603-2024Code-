@@ -105,9 +105,8 @@ public class Robot extends TimedRobot {
 		double rightSpeed = j.getRawAxis(5);
 		int i;
 
-		for(i = 1; i <= 4; i++) {
+		for(i = 1; i <= 4; i++) 
 			setShooterMotors(j.getRawAxis(i), i);
-		}	
 
 		driveLeft1.set(ControlMode.PercentOutput, leftSpeed);
 		driveLeft2.set(ControlMode.PercentOutput, leftSpeed);
