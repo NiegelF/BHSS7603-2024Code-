@@ -4,16 +4,15 @@
 
 package frc.robot;
 
+// import com.revrobotics.CANSparkMax;
+// import com.revrobotics.CANSparkMax.IdleMode;
+// import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-/**import com.revrobotics.CANSparkMax;
-  import com.revrobotics.CANSparkMax.IdleMode;
-  import com.revrobotics.CANSparkMaxLowLevel.MotorType;**/
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -44,42 +43,42 @@ public class Robot extends TimedRobot {
 	VictorSPX driveLeft1 = new VictorSPX(1);
 	VictorSPX driveLeft2 = new VictorSPX(2);
 
-	/* The following function was made to improve readability */
+	// TODO: Decide upon whether or not the ring firing logic should be moved into its
+	// own separate class.
 
 	public void setShooterMotors(double input, int axis)
 	{
-		/* We could change this to be a constant */
 		double deadzone = 0.1;
 		if (input > deadzone || input < -deadzone) {
 			switch (axis) {
-				case 1:
-					armMotor.set(j.getRawAxis(1));
-					break;
-				case 2:
-					shooterMotorBase.set(j.getRawAxis(2));
-					break;
-				case 3:
-					shooterMotorBase.set(j.getRawAxis(3));
-					break;
-				case 4:
-					shooterMotor1.set(j.getRawAxis(4) * 3);
-					shooterMotor2.set(j.getRawAxis(4) * 3);
-					break;
+			case 1:
+				armMotor.set(j.getRawAxis(1));
+				break;
+			case 2:
+				shooterMotorBase.set(j.getRawAxis(2));
+				break;
+			case 3:
+				shooterMotorBase.set(j.getRawAxis(3));
+				break;
+			case 4:
+				shooterMotor1.set(j.getRawAxis(4) * 3);
+				shooterMotor2.set(j.getRawAxis(4) * 3);
+				break;
 			} 
 		} else {
-				switch (axis) {
-					case 1:
-						armMotor.set(0);
-						break;
-					case 2:
-					case 3:
-						shooterMotorBase.set(0);
-						break;
-					case 4:
-						shooterMotor1.set(0);
-						shooterMotor2.set(0);
-						break;
-				}
+			switch (axis) {
+			case 1:
+				armMotor.set(0);
+				break;
+			case 2:
+			case 3:
+				shooterMotorBase.set(0);
+				break;
+			case 4:
+				shooterMotor1.set(0);
+				shooterMotor2.set(0);
+				break;
+			}
 		}
 		return;
 	}
