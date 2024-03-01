@@ -1,133 +1,123 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
-// import com.revrobotics.CANSparkMax;
-// import com.revrobotics.CANSparkMax.IdleMode;
-// import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.TimedRobot;
 
+import java.util.ResourceBundle.Control;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.TimedRobot;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
+ * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
+ * the code necessary to operate a robot with tank drive.
  */
 public class Robot extends TimedRobot {
-	/**
-	 * This function is run when the robot is first started up and should be used for any
-	 * initialization code.
-	 */
-	Joystick j = new Joystick(0);
-	CANSparkMax armMotor = new CANSparkMax(1, MotorType.kBrushless);
-	CANSparkMax shooterMotorBase = new CANSparkMax(2, MotorType.kBrushless);
-	CANSparkMax shooterMotor1 = new CANSparkMax(3, MotorType.kBrushless);
-	CANSparkMax shooterMotor2 = new CANSparkMax(4, MotorType.kBrushless);
 
-	VictorSPX driveRight1 = new VictorSPX(4);
-	VictorSPX driveRight2 = new VictorSPX(3);
-	VictorSPX driveLeft1 = new VictorSPX(1);
-	VictorSPX driveLeft2 = new VictorSPX(2);
+  private VictorSPX driveLeftSpark = new VictorSPX(1);
+  private VictorSPX driveRightSpark = new VictorSPX(3);
+  private VictorSPX driveLeftVictor = new VictorSPX(2);
+  private VictorSPX driveRightVictor = new VictorSPX(4);
+  private Joystick newJoystick = new Joystick(0);
+  CANSparkMax armMotor = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax shooterMotorBase = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax shooterMotor1 = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax shooterMotor2 = new CANSparkMax(4, MotorType.kBrushless);
+  // Add a variable to track whether the turn button was pressed in the previous iteration
+  private boolean previousButtonState = false;
 
-	// TODO: Decide upon whether or not the ring firing logic should be moved into its
-	// own separate class.
+  // Timer to control the duration of the turn
+  private double turnStartTime = 0.0;
+  private double turnDuration = 2.0; // Adjust the duration as needed
 
-	public void setShooterMotors(double input, int axis)
-	{
-		double deadzone = 0.1;
-		if (input > deadzone || input < -deadzone) {
-			switch (axis) {
-			case 1:
-				armMotor.set(j.getRawAxis(1));
-				break;
-			case 2:
-				shooterMotorBase.set(j.getRawAxis(2));
-				break;
-			case 3:
-				shooterMotorBase.set(j.getRawAxis(3));
-				break;
-			case 4:
-				shooterMotor1.set(j.getRawAxis(4) * 3);
-				shooterMotor2.set(j.getRawAxis(4) * 3);
-				break;
-			} 
-		} else {
-			switch (axis) {
-			case 1:
-				armMotor.set(0);
-				break;
-			case 2:
-			case 3:
-				shooterMotorBase.set(0);
-				break;
-			case 4:
-				shooterMotor1.set(0);
-				shooterMotor2.set(0);
-				break;
-			}
-		}
-		return;
-	}
+  @Override
+  public void robotInit() {
+    // We need to invert one side of the drivetrain so that positive voltages
+    // result in both sides moving forward. Depending on how your robot's
+    // gearbox is constructed, you might have to invert the left side instead.
+  }
 
-	@Override
-	public void robotInit() {}
+  @Override
+  public void teleopPeriodic() {
+    double x_ampl = newJoystick.getRawAxis(1);
+    double y_ampl = newJoystick.getRawAxis(0);
+    double leftSpeed = (-x_ampl + y_ampl);
+    double rightSpeed = (y_ampl + x_ampl);
+  
+    if (newJoystick.getRawButton(1)){
+      shooterMotor1.set(-5);
+      shooterMotor2.set(-5);
+    }
+    else if (newJoystick.getRawButton(2)){
+      shooterMotor1.set(5);
+      shooterMotor2.set(5);
+    }  
+    else if(newJoystick.getRawButton(6)){
+      shooterMotor2.set(-5);
+    }
+    else{
+      shooterMotor1.set(0);
+      shooterMotor2.set(0);
+    }
+    if (newJoystick.getRawButton(5)){
+      shooterMotorBase.set(1);
+    }
+    else if(newJoystick.getRawButton(3)){
+      shooterMotorBase.set(-1);
+    }
+    else{
+      shooterMotorBase.set(0);
+    }
 
-	@Override
-	public void robotPeriodic() {}
+    if (leftSpeed > 1) {
+      leftSpeed = leftSpeed / 3;
+    }
 
-	@Override
-	public void autonomousInit() {}
+    if (rightSpeed > 1) {
+      rightSpeed = rightSpeed / 3;   
+    }
 
-	@Override
-	public void autonomousPeriodic() {}
+    // Check if the button is pressed and was not pressed in the previous iteration
+    boolean currentButtonState = newJoystick.getRawButton(11);
 
-	@Override
-	public void teleopInit() {}
+    if (currentButtonState && !previousButtonState) {
+      // Button was just pressed, initiate a 90-degree turn using a timer
+      turnStartTime = Timer.getFPGATimestamp();
+    }
 
-	@Override
-	public void teleopPeriodic() {
-		double leftSpeed = -j.getRawAxis(1);
-		double rightSpeed = j.getRawAxis(5);
-		int i;
+    // Check if the turn duration has passed
+    if (Timer.getFPGATimestamp() - turnStartTime < turnDuration) {
+      // Continue turning
+      driveLeftSpark.set(ControlMode.PercentOutput, 0.5);  // Example speed, adjust as needed
+      driveRightSpark.set(ControlMode.PercentOutput, -0.5); // Example speed, adjust as needed
+    } else {
+      // Stop the motors once the turn is complete
+      driveLeftSpark.set(ControlMode.PercentOutput, 0);
+      driveRightSpark.set(ControlMode.PercentOutput, 0);
+    }
 
-		for(i = 1; i <= 4; i++) 
-			setShooterMotors(j.getRawAxis(i), i);
+    // Update the previous button state for the next iteration
+    previousButtonState = currentButtonState;
 
-		driveLeft1.set(ControlMode.PercentOutput, leftSpeed);
-		driveLeft2.set(ControlMode.PercentOutput, leftSpeed);
-		driveRight1.set(ControlMode.PercentOutput, rightSpeed);
-		driveRight2.set(ControlMode.PercentOutput, rightSpeed);
-	}
+    driveLeftSpark.set(ControlMode.PercentOutput, leftSpeed);
+    driveLeftVictor.set(ControlMode.PercentOutput, leftSpeed);
+    driveRightVictor.set(ControlMode.PercentOutput, rightSpeed);
+    driveRightSpark.set(ControlMode.PercentOutput, rightSpeed);
+  }
 
-	@Override
-	public void disabledInit() {}
+  @Override
+  public void autonomousInit() {
+    // Add any initialization code for autonomous mode here.
+  }
 
-	@Override
-	public void disabledPeriodic() {}
-
-	@Override
-	public void testInit() {}
-
-	@Override
-	public void testPeriodic() {}
-
-	@Override
-	public void simulationInit() {}
-
-	@Override
-	public void simulationPeriodic() {}
+  @Override
+  public void autonomousPeriodic() {
+    driveLeftSpark.set(ControlMode.PercentOutput, 1.0);
+    driveRightSpark.set(ControlMode.PercentOutput, 1.0);
+  }
 }
