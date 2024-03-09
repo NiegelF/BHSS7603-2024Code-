@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
@@ -34,9 +35,11 @@ public class Robot extends TimedRobot {
   // Timer to control the duration of the turn
   private double turnStartTime = 0.0;
   private double turnDuration = 2.0; // Adjust the duration as needed
-
+  private double autonomousStartTime;
   @Override
   public void robotInit() {
+    CameraServer.startAutomaticCapture();
+  
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
@@ -48,7 +51,15 @@ public class Robot extends TimedRobot {
     double y_ampl = newJoystick.getRawAxis(0);
     double leftSpeed = (-x_ampl + y_ampl);
     double rightSpeed = (y_ampl + x_ampl);
-  
+    
+    if (newJoystick.getRawButton(12)){
+      armMotor.set(1);
+    }else if(newJoystick.getRawButton(11)){
+      armMotor.set(-1);
+    }else{
+      armMotor.set(0);
+    }
+
     if (newJoystick.getRawButton(1)){
       shooterMotor1.set(-5);
       shooterMotor2.set(-5);
@@ -82,27 +93,9 @@ public class Robot extends TimedRobot {
       rightSpeed = rightSpeed / 3;   
     }
 
-    // Check if the button is pressed and was not pressed in the previous iteration
-    boolean currentButtonState = newJoystick.getRawButton(11);
 
-    if (currentButtonState && !previousButtonState) {
-      // Button was just pressed, initiate a 90-degree turn using a timer
-      turnStartTime = Timer.getFPGATimestamp();
-    }
-
-    // Check if the turn duration has passed
-    if (Timer.getFPGATimestamp() - turnStartTime < turnDuration) {
-      // Continue turning
-      driveLeftSpark.set(ControlMode.PercentOutput, 0.5);  // Example speed, adjust as needed
-      driveRightSpark.set(ControlMode.PercentOutput, -0.5); // Example speed, adjust as needed
-    } else {
-      // Stop the motors once the turn is complete
-      driveLeftSpark.set(ControlMode.PercentOutput, 0);
-      driveRightSpark.set(ControlMode.PercentOutput, 0);
-    }
 
     // Update the previous button state for the next iteration
-    previousButtonState = currentButtonState;
 
     driveLeftSpark.set(ControlMode.PercentOutput, leftSpeed);
     driveLeftVictor.set(ControlMode.PercentOutput, leftSpeed);
@@ -113,11 +106,36 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // Add any initialization code for autonomous mode here.
+     autonomousStartTime = Timer.getFPGATimestamp();
+
   }
 
   @Override
   public void autonomousPeriodic() {
-    driveLeftSpark.set(ControlMode.PercentOutput, 1.0);
-    driveRightSpark.set(ControlMode.PercentOutput, 1.0);
+    double timeElapsed = Timer.getFPGATimestamp() - autonomousStartTime;
+    if (timeElapsed < 3){
+      shooterMotor2.set(-5);
+
+    } else if(timeElapsed < 4){
+      shooterMotor1.set(-5);
+      shooterMotor2.set(-5);
+    }else if(timeElapsed < 5){
+      driveLeftSpark.set(ControlMode.PercentOutput, -0.25);
+      driveLeftVictor.set(ControlMode.PercentOutput, -0.25);
+      driveRightVictor.set(ControlMode.PercentOutput, 0.25);
+      driveRightSpark.set(ControlMode.PercentOutput, 0.25);
+    }else if(timeElapsed < 5.25){
+      driveLeftSpark.set(ControlMode.PercentOutput, 0.25);
+      driveLeftVictor.set(ControlMode.PercentOutput,0.25);
+      driveRightVictor.set(ControlMode.PercentOutput, -0.25);
+      driveRightSpark.set(ControlMode.PercentOutput, -0.25);
+    } else{
+      driveLeftSpark.set(ControlMode.PercentOutput, 0);
+      driveLeftVictor.set(ControlMode.PercentOutput, 0);
+      driveRightVictor.set(ControlMode.PercentOutput, 0);
+      driveRightSpark.set(ControlMode.PercentOutput, 0);
+      shooterMotor1.set(0);
+      shooterMotor2.set(0);
+    }
   }
 }
