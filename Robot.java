@@ -32,26 +32,67 @@ public class Robot extends TimedRobot
 
 	public void handleButtons()
 	{
-		// This was ripped straight from an older version of the code
-		// and should probably be refactored at some point in the near
-		// to distant future.
-		if (newJoystick.getRawButton(12)) {
-			climbMotor.set(1);
-		} else if (newJoystick.getRawButton(11)) {
-			climbMotor.set(-1);
-		} else {
-			climbMotor.set(0);
+		double climbascentspeed = -1;
+		double climbdescentspeed = 1;
+		double intakespeed = 1;
+		double firingspeed = -1;
+		int[] climbbuttons = {11, 12};
+		int[] shooterbuttons = {1, 2, 6};
+		int climbbindcount = 2;
+		int shooterbindcount = 3;
+		int climbmode = 0;
+		int shootermode = 0;
+		int i;
+
+		// Notes:
+		//
+		// climbmode += 1 * Math.pow(2, i) works in a similar way to that of a
+		// binary numeral system, assigning a different "fingerprint" value for
+		// every given combination of button presses that one can deploy when
+		// one goes about using the controller to manipulate the robot's motors.
+		//
+		// The following code was specifically designed to be functionally
+		// identical to the old code insofar as its functionality is concerned.
+
+		for (i = 0; i < climbbindcount; i++) {
+			if (newJoystick.getRawButton(climbbuttons[i])) 
+				climbmode += 1 * Math.pow(2, i);
 		}
 
-		if (newJoystick.getRawButton(1)) {
-			shooterMotor1.set(-1);
-			shooterMotor2.set(-1);
-		} else if (newJoystick.getRawButton(2)) {
-			shooterMotor1.set(1);
-			shooterMotor2.set(1);
-		} else if (newJoystick.getRawButton(6)) {
-			shooterMotor2.set(-1);
-		} else {
+		switch (climbmode) {
+		case 1:
+		case 3:
+			climbMotor.set(climbascentspeed);
+			break;
+		case 2:
+			climbMotor.set(climbdescentspeed);
+			break;
+		default:
+			climbMotor.set(0);
+			break;
+		}
+
+		for (i = 0; i < shooterbindcount; i++) {
+			if (newJoystick.getRawButton(shooterbuttons[i]))
+				climbmode += 1 * Math.pow(2, i);
+		}
+
+		switch (shootermode) {
+		case 1:
+		case 3:
+		case 5:
+			shooterMotor1.set(firingspeed);
+			shooterMotor2.set(firingspeed);
+			break;
+		case 2:
+		case 6:
+			shooterMotor1.set(intakespeed);
+			shooterMotor2.set(intakespeed);
+			break;
+		case 4:
+			shooterMotor2.set(firingspeed);
+			break;
+		default:
 			shooterMotor1.set(0);
 			shooterMotor2.set(0);
 		}
@@ -70,6 +111,8 @@ public class Robot extends TimedRobot
 		driveLeftVictor.set(ControlMode.PercentOutput, leftspeed);
 		driveRightVictor.set(ControlMode.PercentOutput, rightspeed);
 		driveRightSpark.set(ControlMode.PercentOutput, rightspeed);
+
+		return;
 	}
 
 	public void disableAllMotors()
@@ -78,6 +121,8 @@ public class Robot extends TimedRobot
 		shooterMotor1.set(0);
 		shooterMotor2.set(0);
 		climbMotor.set(0);
+
+		return;
 	}
 
 	@Override
