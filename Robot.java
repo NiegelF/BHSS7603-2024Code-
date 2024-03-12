@@ -30,14 +30,6 @@ public class Robot extends TimedRobot
 	private double turnDuration = 2.0; // Adjust the duration as needed
 	private double autonomousStartTime;
 
-	public void disableAllMotors()
-	{
-		driveRobot(0, 0);
-		shooterMotor1.set(0);
-		shooterMotor2.set(0);
-		climbMotor.set(0);
-	}
-
 	public void handleButtons()
 	{
 		// This was ripped straight from an older version of the code
@@ -78,6 +70,14 @@ public class Robot extends TimedRobot
 		driveLeftVictor.set(ControlMode.PercentOutput, leftspeed);
 		driveRightVictor.set(ControlMode.PercentOutput, rightspeed);
 		driveRightSpark.set(ControlMode.PercentOutput, rightspeed);
+	}
+
+	public void disableAllMotors()
+	{
+		driveRobot(0, 0);
+		shooterMotor1.set(0);
+		shooterMotor2.set(0);
+		climbMotor.set(0);
 	}
 
 	@Override
