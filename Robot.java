@@ -55,7 +55,7 @@ public class Robot extends TimedRobot
 		return;
 	}
 
-	public void handleButtons()
+	public int handleButtons()
 	{
 		double climbascentspeed = 1;
 		double climbdescentspeed = 1;
@@ -72,6 +72,7 @@ public class Robot extends TimedRobot
 		int climbmode = 0;
 		int shootermode = 0;
 		int movemode = 0;
+		int inhibitmovement = 1;
 		int i;
 
 		climbascentspeed *= -1;
@@ -157,11 +158,11 @@ public class Robot extends TimedRobot
 			driveRobot(slowturnspeed, slowturnspeed);
 			break;
 		default:
-			driveRobot(0, 0);
+			inhibitmovement = 0;
 			break;
 		}
 
-		return;
+		return inhibitmovement;
 	}
 
 	@Override
@@ -193,8 +194,7 @@ public class Robot extends TimedRobot
 		leftspeed = (y_ampl - x_ampl);
 		rightspeed = (y_ampl + x_ampl);
 
-		handleButtons();
-		driveRobot(leftspeed, rightspeed);
+		if (handleButtons() == 0) driveRobot(leftspeed, rightspeed);
 
 		return;
 	}
