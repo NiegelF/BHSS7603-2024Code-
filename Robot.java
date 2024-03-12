@@ -32,10 +32,10 @@ public class Robot extends TimedRobot
 
 	public void handleButtons()
 	{
-		double climbascentspeed = -1;
+		double climbascentspeed = 1;
 		double climbdescentspeed = 1;
 		double intakespeed = 1;
-		double firingspeed = -1;
+		double firingspeed = 1;
 		int[] climbbuttons = {11, 12};
 		int[] shooterbuttons = {1, 2, 6};
 		int climbbindcount = 2;
@@ -43,6 +43,9 @@ public class Robot extends TimedRobot
 		int climbmode = 0;
 		int shootermode = 0;
 		int i;
+
+		climbascentspeed *= -1;
+		firingspeed *= -1;
 
 		// Notes:
 		//
@@ -129,12 +132,14 @@ public class Robot extends TimedRobot
 	public void robotInit()
 	{
 		CameraServer.startAutomaticCapture();
+		return;
 	}
 
 	@Override
 	public void teleopInit()
 	{
 		disableAllMotors();
+		return;
 	}
 
 	@Override
@@ -154,14 +159,17 @@ public class Robot extends TimedRobot
 
 		handleButtons();
 		driveRobot(leftspeed, rightspeed);
+
+		return;
 	}
 
 	@Override
 	public void autonomousInit()
 	{
-		// Add any initialization code for autonomous mode here.
 		autonomousStartTime = Timer.getFPGATimestamp();
 		disableAllMotors();
+
+		return;
 	}
 
 	@Override
@@ -198,5 +206,6 @@ public class Robot extends TimedRobot
 			disableAllMotors();
 			break;
 		}
+		return;
 	}
 }
