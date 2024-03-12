@@ -206,6 +206,7 @@ public class Robot extends TimedRobot
 			disableAllMotors();
 			break;
 		}
+
 		return;
 	}
 }
