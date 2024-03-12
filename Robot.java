@@ -47,7 +47,7 @@ public class Robot extends TimedRobot
 		// Notes:
 		//
 		// climbmode += 1 * Math.pow(2, i) works in a similar way to that of a
-		// binary numeral system, assigning a different "fingerprint" value for
+		// binary number system, assigning a different "fingerprint" value for
 		// every given combination of button presses that one can deploy when
 		// one goes about using the controller to manipulate the robot's motors.
 		//
