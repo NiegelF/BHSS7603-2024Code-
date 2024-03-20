@@ -3,31 +3,24 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import java.util.ResourceBundle.Control;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends TimedRobot
 {
-	private VictorSPX driveLeftSpark = new VictorSPX(1);
-	private VictorSPX driveRightSpark = new VictorSPX(3);
-	private VictorSPX driveLeftVictor = new VictorSPX(2);
-	private VictorSPX driveRightVictor = new VictorSPX(4);
+	private VictorSPX driveLeft1 = new VictorSPX(1);
+	private VictorSPX driveRight1 = new VictorSPX(3);
+	private VictorSPX driveLeft2 = new VictorSPX(2);
+	private VictorSPX driveRight2 = new VictorSPX(4);
 	private Joystick newJoystick = new Joystick(0);
 	CANSparkMax climbMotor = new CANSparkMax(1, MotorType.kBrushless);
 	CANSparkMax shooterMotor1 = new CANSparkMax(3, MotorType.kBrushed);
 	CANSparkMax shooterMotor2 = new CANSparkMax(4, MotorType.kBrushed);
 
-	// Timer to control the duration of the turn
-	private double turnStartTime = 0.0;
-	private double turnDuration = 2.0; // Adjust the duration as needed
-	private double autonomousStartTime;
+	Timer autoTimer = new Timer();
 
 	public void driveRobot(double leftspeed, double rightspeed)
 	{
@@ -36,10 +29,10 @@ public class Robot extends TimedRobot
 		if (leftspeed < -1) leftspeed = -1;
 		if (rightspeed < -1) rightspeed = -1;
 
-		driveLeftSpark.set(ControlMode.PercentOutput, leftspeed);
-		driveLeftVictor.set(ControlMode.PercentOutput, leftspeed);
-		driveRightVictor.set(ControlMode.PercentOutput, rightspeed);
-		driveRightSpark.set(ControlMode.PercentOutput, rightspeed);
+		driveLeft1.set(ControlMode.PercentOutput, leftspeed);
+		driveLeft2.set(ControlMode.PercentOutput, leftspeed);
+		driveRight2.set(ControlMode.PercentOutput, rightspeed);
+		driveRight1.set(ControlMode.PercentOutput, rightspeed);
 
 		return;
 	}
@@ -197,19 +190,29 @@ public class Robot extends TimedRobot
 	@Override
 	public void autonomousInit()
 	{
-		autonomousStartTime = Timer.getFPGATimestamp();
+		autoTimer.restart();
+		autoTimer.start();
 		disableAllMotors();
 	}
 
 	@Override
 	public void autonomousPeriodic()
 	{
-		double timeelapsed = Timer.getFPGATimestamp() - autonomousStartTime;
+		double timeelapsed = autoTimer.get();
+		
+		/*
 		double enableshooter = 0;
 		int mode = 0;
 
 		enableshooter *= -1;
+		*/
 
+		if (timeelapsed < 3) {
+			driveRobot(-0.5, 0.5);
+		} else {
+			driveRobot(0, 0);
+		}
+		/*
 		mode += ((timeelapsed > 3) ? 1 : 0);
 		mode += ((timeelapsed > 4) ? 1 : 0);
 		mode += ((timeelapsed > 5) ? 1 : 0);
@@ -235,5 +238,6 @@ public class Robot extends TimedRobot
 			disableAllMotors();
 			break;
 		}
+		*/
 	}
 }
