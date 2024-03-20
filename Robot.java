@@ -21,9 +21,8 @@ public class Robot extends TimedRobot
 	private VictorSPX driveRightVictor = new VictorSPX(4);
 	private Joystick newJoystick = new Joystick(0);
 	CANSparkMax climbMotor = new CANSparkMax(1, MotorType.kBrushless);
-	CANSparkMax shooterMotorBase = new CANSparkMax(2, MotorType.kBrushless);
-	CANSparkMax shooterMotor1 = new CANSparkMax(3, MotorType.kBrushless);
-	CANSparkMax shooterMotor2 = new CANSparkMax(4, MotorType.kBrushless);
+	CANSparkMax shooterMotor1 = new CANSparkMax(3, MotorType.kBrushed);
+	CANSparkMax shooterMotor2 = new CANSparkMax(4, MotorType.kBrushed);
 
 	// Timer to control the duration of the turn
 	private double turnStartTime = 0.0;
@@ -61,7 +60,7 @@ public class Robot extends TimedRobot
 		double climbdescentspeed = 1;
 		double intakespeed = 1;
 		double firingspeed = 1;
-		double fastturnspeed = 0.25;
+		double fastturnspeed = 0.35;
 		double slowturnspeed = 0.2;
 		int[] climbbuttons = {11, 12};
 		int[] shooterbuttons = {1, 2, 6};
@@ -87,8 +86,8 @@ public class Robot extends TimedRobot
 		//
 		// The following code was specifically designed to be functionally
 		// identical to the old code insofar as its functionality is concerned,
-		// with the only exception to this rule being with the functionality of
-		// the new turn binds.
+		// with the only exception to this rule being associated with that of 
+		// the functionality of the new turn binds.
 
 		for (i = 0; i < climbbindcount; i++) {
 			if (newJoystick.getRawButton(climbbuttons[i]))
@@ -169,14 +168,12 @@ public class Robot extends TimedRobot
 	public void robotInit()
 	{
 		CameraServer.startAutomaticCapture();
-		return;
 	}
 
 	@Override
 	public void teleopInit()
 	{
 		disableAllMotors();
-		return;
 	}
 
 	@Override
@@ -186,7 +183,7 @@ public class Robot extends TimedRobot
 		double y_ampl = newJoystick.getRawAxis(0);
 		double leftspeed = 0;
 		double rightspeed = 0;
-		double deadzone = 0.05;
+		double deadzone = 0.01;
 
 		if (-deadzone < x_ampl && x_ampl < deadzone) x_ampl = 0;
 		if (-deadzone < y_ampl && y_ampl < deadzone) y_ampl = 0;
@@ -195,8 +192,6 @@ public class Robot extends TimedRobot
 		rightspeed = (y_ampl + x_ampl);
 
 		if (handleButtons() == 0) driveRobot(leftspeed, rightspeed);
-
-		return;
 	}
 
 	@Override
@@ -204,8 +199,6 @@ public class Robot extends TimedRobot
 	{
 		autonomousStartTime = Timer.getFPGATimestamp();
 		disableAllMotors();
-
-		return;
 	}
 
 	@Override
@@ -242,7 +235,5 @@ public class Robot extends TimedRobot
 			disableAllMotors();
 			break;
 		}
-
-		return;
 	}
 }
