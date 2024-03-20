@@ -199,45 +199,43 @@ public class Robot extends TimedRobot
 	public void autonomousPeriodic()
 	{
 		double timeelapsed = autoTimer.get();
-		
-		/*
 		double enableshooter = 0;
+		double jerkspeed = 0.5;
+		double normalspeed = 0.25;
 		int mode = 0;
 
 		enableshooter *= -1;
-		*/
 
-		if (timeelapsed < 3) {
-			driveRobot(-0.5, 0.5);
-		} else {
-			driveRobot(0, 0);
-		}
-		/*
-		mode += ((timeelapsed > 3) ? 1 : 0);
-		mode += ((timeelapsed > 4) ? 1 : 0);
+		// case 1
+		mode += ((timeelapsed > 0.5) ? 1 : 0);
+		// case 2
+		mode += ((timeelapsed > 1) ? 1 : 0);
+		// case 3
+		mode += ((timeelapsed > 2) ? 1 : 0);
+		// case 4 / default
 		mode += ((timeelapsed > 5) ? 1 : 0);
-		mode += ((timeelapsed > 5.25) ? 1 : 0);
 
 		switch (mode) {
 		case 0:
+			driveRobot(-jerkspeed, jerkspeed);
 			shooterMotor2.set(enableshooter);
 			break;
 		case 1:
+			driveRobot(jerkspeed, -jerkspeed);
+			break;
+		case 2:
+			driveRobot(0, 0);
 			shooterMotor1.set(enableshooter);
 			shooterMotor2.set(enableshooter);
 			break;
-		case 2:
-			driveRobot(-0.25, 0.25);
+		case 3:
+			driveRobot(-normalspeed, normalspeed);
 			shooterMotor1.set(0);
 			shooterMotor2.set(0);
-			break;
-		case 3:
-			driveRobot(0.25, -0.25);
 			break;
 		default:
 			disableAllMotors();
 			break;
 		}
-		*/
 	}
 }
