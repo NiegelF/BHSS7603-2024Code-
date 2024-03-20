@@ -212,8 +212,10 @@ public class Robot extends TimedRobot
 		mode += ((timeelapsed > 1) ? 1 : 0);
 		// case 3
 		mode += ((timeelapsed > 2) ? 1 : 0);
-		// case 4 / default
-		mode += ((timeelapsed > 5) ? 1 : 0);
+		// case 4
+		mode += ((timeelapsed > 3) ? 1 : 0);
+		// case 5
+		mode += ((timeelapsed > 6) ? 1 : 0);
 
 		switch (mode) {
 		case 0:
@@ -225,10 +227,11 @@ public class Robot extends TimedRobot
 			break;
 		case 2:
 			driveRobot(0, 0);
+		case 3:
 			shooterMotor1.set(enableshooter);
 			shooterMotor2.set(enableshooter);
 			break;
-		case 3:
+		case 4:
 			driveRobot(-normalspeed, normalspeed);
 			shooterMotor1.set(0);
 			shooterMotor2.set(0);
