@@ -58,9 +58,6 @@ public class Robot extends TimedRobot
 		int[] climbbuttons = {11, 12};
 		int[] shooterbuttons = {1, 2, 6};
 		int[] movebuttons = {7, 8, 9, 10};
-		int climbbindcount = 2;
-		int shooterbindcount = 3;
-		int movebindcount = 4;
 		int climbmode = 0;
 		int shootermode = 0;
 		int movemode = 0;
@@ -82,7 +79,7 @@ public class Robot extends TimedRobot
 		// with the only exception to this rule being associated with that of 
 		// the functionality of the new turn binds.
 
-		for (i = 0; i < climbbindcount; i++) {
+		for (i = 0; i < climbbuttons.length; i++) {
 			if (newJoystick.getRawButton(climbbuttons[i]))
 				climbmode += 1 * Math.pow(2, i);
 		}
@@ -100,7 +97,7 @@ public class Robot extends TimedRobot
 			break;
 		}
 
-		for (i = 0; i < shooterbindcount; i++) {
+		for (i = 0; i < shooterbuttons.length; i++) {
 			if (newJoystick.getRawButton(shooterbuttons[i]))
 				shootermode += 1 * Math.pow(2, i);
 		}
@@ -126,7 +123,7 @@ public class Robot extends TimedRobot
 			break;
 		}
 
-		for (i = 0; i < movebindcount; i++) {
+		for (i = 0; i < movebuttons.length; i++) {
 			if (newJoystick.getRawButton(movebuttons[i]))
 				movemode += 1 * Math.pow(2, i);
 		}
@@ -198,24 +195,24 @@ public class Robot extends TimedRobot
 	@Override
 	public void autonomousPeriodic()
 	{
+		double[] timeincrements = {0.5, 0.5, 1, 1, 1, 3};
 		double timeelapsed = autoTimer.get();
+		double accumulator = 0;
 		double enableshooter = 0;
 		double jerkspeed = 0.5;
 		double normalspeed = 0.25;
 		int mode = 0;
+		int i;
 
 		enableshooter *= -1;
 
-		// case 1
-		mode += ((timeelapsed > 0.5) ? 1 : 0);
-		// case 2
-		mode += ((timeelapsed > 1) ? 1 : 0);
-		// case 3
-		mode += ((timeelapsed > 2) ? 1 : 0);
-		// case 4
-		mode += ((timeelapsed > 3) ? 1 : 0);
-		// case 5
-		mode += ((timeelapsed > 6) ? 1 : 0);
+		for (i = 0; i < timeincrements.length; i++) {
+			accumulator += timeincrements[i];
+			if (accumulator > timeelapsed) {
+				mode = i;
+				break;
+			}
+		}
 
 		switch (mode) {
 		case 0:
